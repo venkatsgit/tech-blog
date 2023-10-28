@@ -13,7 +13,7 @@ ChatGPT can help you create code for computer programs and write queries for dat
 
 `To ask the right question is already half the solution of a problem. — Carl Jung`
 
-## Key components in the query description
+### Key components in the query description
 
 A clear query description should have these important parts
 
@@ -25,7 +25,9 @@ A clear query description should have these important parts
 |Sorting|	The order in which query results should be presented (ascending or descending).| sort the results by 'orderamount' in descending order|
 |Limit|	The maximum number of documents to include in the result.|limit the output to 10 orders|
 
-Example
+### Sample Description and Query Response
+
+Problem Description
 
     	I have a collection named 'orders' with fields 'ordernumber,' 'status,' 'orderamount,' and 'buyercurrency.' I want to find all order in the 'paid' status with a orderamount greater than $500 and a buyer paid in USD. Please sort the results by 'orderamount' in descending order, limit the output to 10 orders, and only return the 'ordernumber'  and 'orderamount' fields
 
@@ -43,3 +45,60 @@ Query Response from chat gpt
             }).sort({
             "orderamount": -1
             }).limit(10)
+
+### How to get the field names 
+
+you can run this script in the mongo shell to get the field names
+
+        var sampleDoc = db.order.findOne({});
+        function getAllNestedKeys(obj) {
+        const keys = [];
+
+        function iterate(obj, currentKey) {
+            for (let key in obj) {
+            const newKey = currentKey ? `${currentKey}.${key}` : key;
+            keys.push(newKey);
+            if (typeof obj[key] === 'object') {
+                iterate(obj[key], newKey);
+            }
+            }
+        }
+
+        iterate(obj, '');
+
+        return keys;
+        }
+        var fieldNames = getAllNestedKeys(sampleDoc);
+        print(fieldNames);
+
+the above query has been modified the field names are corrected 
+
+        [
+            "_id",
+            "_id.str",
+            "_id.tojson",
+            "_id.valueOf",
+            "_id.isObjectId",
+            "_id.getTimestamp",
+            "_id.equals",
+            "accountNumber",
+            "orderNumber",
+            "orderID",
+            "orderNumber",
+            "orderSoldAmount",
+            "orderSoldAmount.amount",
+            "orderSoldAmount.currencyCode",
+            "orderStatus",
+            "timeCreated",
+        ]
+
+
+        db.orders.find({
+            "orderStatus": "DELIVERED",
+            "orderSoldAmount.amount": { $gt: 500 },
+            "orderSoldAmount.currencyCode": "SGD"
+        }, {
+            "orderNumber": 1,
+            "orderSoldAmount.amount": 1,
+            "_id": 0
+        }).sort({ "orderSoldAmount.amount": -1 }).limit(10);
