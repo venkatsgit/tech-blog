@@ -46,9 +46,9 @@ Query Response from chat gpt
             "orderamount": -1
             }).limit(10)
 
-### How to get the field names 
+### Ensure proper field names are used 
 
-you can run this script in the mongo shell to get the field names
+You can run this script in the MongoDB shell to fetch the field names.
 
         var sampleDoc = db.order.findOne({});
         function getAllNestedKeys(obj) {
@@ -71,7 +71,7 @@ you can run this script in the mongo shell to get the field names
         var fieldNames = getAllNestedKeys(sampleDoc);
         print(fieldNames);
 
-the above query has been modified the field names are corrected 
+The previous query has been updated, and the field names have been corrected
 
         [
             "_id",
@@ -102,3 +102,6 @@ the above query has been modified the field names are corrected
             "orderSoldAmount.amount": 1,
             "_id": 0
         }).sort({ "orderSoldAmount.amount": -1 }).limit(10);
+
+
+I haven't discussed JOIN operations in this post because MongoDB encourages embedding related data within a document as the primary approach. JOINs are considered a secondary method and can be achieved through the $lookup stage in the aggregation framework. If you'd like to explore JOIN examples, please leave a comment, and I'll update this post accordingly.
